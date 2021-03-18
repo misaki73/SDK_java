@@ -34,9 +34,13 @@ public class AcAlgorithm extends com.huawei.java.main.InputData {
                 i++;
             }
             //随机选择
+            int next=-1;
             for (i=0;i<x.length;i++){
-                int j=roulette(possibility[i]);
-                x[i][j]=1;
+                double r=Math.random();
+                if(next==-1 || r<0.1 || possibility[i][next]==0.0){
+                    next=roulette(possibility[i]);
+                }
+                x[i][next]=1;
             }
             //计算money
             double money=getMoney(x,todayApp);
