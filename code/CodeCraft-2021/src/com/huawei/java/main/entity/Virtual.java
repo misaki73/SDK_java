@@ -50,6 +50,19 @@ public class Virtual {
             this.deployedServerNode=0;//待指派给a或b节点
         }
     }
+    public Virtual(List<Integer> list,int i){
+        this.id = list.get(0);
+        this.requiredCPU = list.get(1);
+        this.requiredMem = list.get(2);
+        this.isDouble = i;
+        deployedServerId=-1;
+        this.isDel=false;
+        if (isDouble==1){
+            this.deployedServerNode=3;
+        }else {
+            this.deployedServerNode=0;//待指派给a或b节点
+        }
+    }
 
     public Virtual(int id, String typeName, int requiredCPU, int requiredMem, int isDouble) {
         this.id = id;

@@ -117,10 +117,12 @@ public class InputData {
             allTDayAppList_double.add(everyDayAppList_double);
             allTDayAppList_single.add(everyDayAppList_single);
             allTDayAppList.add(everyDayAppList);
+
             //del
             allTDayDelList.add(everyDayDelList);
             //统计现存的id
             allTDayActList.add(temp);
+
         }
     }
     public static String[] disgardBracket(String inputString){

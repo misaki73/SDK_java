@@ -30,8 +30,11 @@ public class Algorithm extends com.huawei.java.main.Base{
             printDayOutput(day);
 
             //删除操作
-            executeDel(day);
+         //  executeDel(day);
 
+            if(day==134){
+                System.out.println();
+            }
             //计算money
             money+=calMoney(day);
         }
@@ -40,7 +43,7 @@ public class Algorithm extends com.huawei.java.main.Base{
     public static long calMoney(int day){
         long money=0;
         LinkedHashMap<String,Integer> todayPurScheme = allDaypurchaseScheme.get(day);
-        System.out.println("(purchase, "+todayPurScheme.size()+")");
+      //  System.out.println("(purchase, "+todayPurScheme.size()+")");
         for (Map.Entry<String, Integer> entry : todayPurScheme.entrySet()) {
             List<Integer> list = hmForN_serverType.get(entry.getKey());
             money +=list.get(2)*entry.getValue();
@@ -81,19 +84,19 @@ public class Algorithm extends com.huawei.java.main.Base{
         System.out.println("(migration, 0)");
 
         //输出今天请求结果
-        List<Integer> todayAppLits = allTDayAppList.get(day);
+        List<List<Integer>> todayAppLits = allTDayAddList.get(day);
         for (int i=0;i<todayAppLits.size(); i++){
-            int id_outer=myidToOut.get(virtualMap.get(todayAppLits.get(i)).getDeployedServerId());//根据虚拟机当前部署的服务器的内部id获取其外部id
+            int id=todayAppLits.get(i).get(0);
+            int id_outer=myidToOut.get(virtualMap.get(id).getDeployedServerId());//根据虚拟机当前部署的服务器的内部id获取其外部id
             System.out.print("("+id_outer);
-            if(virtualMap.get(todayAppLits.get(i)).getDeployedServerNode()==1){
+            if(virtualMap.get(id).getDeployedServerNode()==1){
                 System.out.print(", A");
-            }else if(virtualMap.get(todayAppLits.get(i)).getDeployedServerNode()==2){
+            }else if(virtualMap.get(id).getDeployedServerNode()==2){
                 System.out.print(", B");
             }
             System.out.println(")");
         }
     }
-
     public static void setPurRecommend(int day){
         purRecommend = new ArrayList<>();
         TreeMap<Double,String> scores = new TreeMap<>();
@@ -110,14 +113,20 @@ public class Algorithm extends com.huawei.java.main.Base{
     public static void setvirtualMap(){
 
         for(int day=0;day<T;day++){
-            for(int i=0;i<allTDayAppList.get(day).size();i++){
-                String name=allTDayAppNameList.get(day).get(i);
-                int id = allTDayAppList.get(day).get(i);
-                Virtual v=new Virtual(id,name,hmForM_virtualType.get(name).get(0),hmForM_virtualType.get(name).get(1),hmForM_virtualType.get(name).get(2));
-                virtualMap.put(id,v);
+            for(Map.Entry<Integer,List<Integer>> temp:DayAddDoubleList_rmDouble.get(day).entrySet()){
+                //String name=allTDayAppNameList.get(day).get(i);
+                Virtual v=new Virtual(temp.getValue(),1);
+                virtualMap.put(v.getId(),v);
+
+            }
+            for(Map.Entry<Integer,List<Integer>> temp:DayAddSingleList_rmDouble.get(day).entrySet()){
+                //String name=allTDayAppNameList.get(day).get(i);
+                Virtual v=new Virtual(temp.getValue(),0);
+                virtualMap.put(v.getId(),v);
 
             }
         }
+
     }
 
     /* 处理每日申请购买*/
@@ -125,7 +134,9 @@ public class Algorithm extends com.huawei.java.main.Base{
         LinkedHashMap<String,Integer> todayPurScheme = new LinkedHashMap<>();
         int servernum = 0 ;
         int len=serverList.size();
-        for(Integer vsid:allTDayAppList.get(day)){
+        List<List<Integer>> list_ = allTDayAddList.get(day);
+        for(List<Integer> l:list_){
+            int vsid=l.get(0);
             boolean succeed=false;
             Virtual virtual=virtualMap.get(vsid);
 
@@ -150,6 +161,7 @@ public class Algorithm extends com.huawei.java.main.Base{
                 //购买策略推荐
                 List<Integer> list=new ArrayList<>();
                 for(int i=0;i<N;i++){
+                //    System.out.println(purRecommend.get(i));
                     list=hmForN_serverType.get(purRecommend.get(i));
                     if(list.get(0)/2>=virtual.getRequiredCPU()/Math.pow(2,virtual.getIsDouble())
                     && list.get(1)/2>=virtual.getRequiredMem()/Math.pow(2,virtual.getIsDouble())){
@@ -196,7 +208,7 @@ public class Algorithm extends com.huawei.java.main.Base{
     /*今日购买策略推荐*/
 
     /*首日购买清单*/
-    public static void firstDayBuy(){
+/*   public static void firstDayBuy(){
         //计算总需求
         virtualMap=new LinkedHashMap<>();
         cpus=new ArrayList<>();
@@ -249,6 +261,8 @@ public class Algorithm extends com.huawei.java.main.Base{
             l_mems.add(mems_1.get(cpus_1.size()) - mems_1.get(cpus_1.size() - cpus_1.size() % range));
         }
     }
+    */
+
 
 
 }
